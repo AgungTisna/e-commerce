@@ -1,3 +1,9 @@
+
+---
+
+## 🤖 4. `.github/workflows/django-ci.yml`
+
+```yaml
 name: Django CI & Lint
 
 on:
@@ -25,29 +31,24 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-
     - name: Setup Python
       uses: actions/setup-python@v4
       with:
         python-version: '3.11'
-
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-
     - name: Apply migrations
       env:
         DATABASE_URL: postgres://test_user:test_pass@localhost:5432/test_db
       run: |
         python backend/manage.py migrate --no-input
-
     - name: Run tests
       env:
         DATABASE_URL: postgres://test_user:test_pass@localhost:5432/test_db
       run: |
         python backend/manage.py test
-
     - name: Lint code
       run: |
         pip install flake8
