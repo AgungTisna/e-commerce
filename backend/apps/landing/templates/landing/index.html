@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Produk</title>
+</head>
+<body>
+    <h1>Halo, {{ nama }}</h1>
+    <h2>Daftar Produk:</h2>
+    <ul>
+        {% for item in produk %}
+            <li>{{ item }}</li>
+        {% endfor %}
+    </ul>
+    <p><a href="{% url 'landing' %}">Kembali ke Landing Page</a></p>
+</body>
+</html>
