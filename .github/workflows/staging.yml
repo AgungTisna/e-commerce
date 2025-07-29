@@ -6,32 +6,54 @@ on:
       - staging
 
 jobs:
-  build_and_deploy:
+  build_and_test:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
         python-version: '3.11'
 
-    - name: Install Dependencies
+    - name: Upgrade pip and install dependencies
       run: |
         python -m pip install --upgrade pip
         pip install -r backend/requirements.txt
 
-    - name: Run Migrations
+    - name: Run Django Migrations
       run: |
         python backend/manage.py migrate
 
-    - name: Run Django Checks
+    - name: Run Django Tests
+      run: |
+        python backend/manage.py test
+
+    - name: Run Django Deployment Checks
       run: |
         python backend/manage.py check --deploy
 
-    - name: Deploy to Staging Environment
-      env:
-        STAGING_SECRET_KEY: ${{ secrets.STAGING_SECRET_KEY }}
+    - name: Lint with flake8
       run: |
-        echo "Deploying to staging..."
-        # Masukkan script deployment staging Anda di sini
+        pip install flake8
+        flake8 backend/ --exclude=migrations --max-line-length=88
+
+    - name: Security Check with safety
+      run: |
+        pip install safety
+        safety check --full-report || true  # Allow it to continue on warning
+
+    - name: Static Code Analysis with bandit
+      run: |
+        pip install bandit
+        bandit -r backend/
+
+    # Tambahkan langkah deploy ke staging server jika sudah siap
+    # - name: Deploy to Staging Server
+    #   env:
+    #     STAGING_SECRET_KEY: ${{ secrets.STAGING_SECRET_KEY }}
+    #   run: |
+    #     echo "Deploying to staging server..."
+    #     # Tambahkan script SSH/SCP atau rsync di sini
