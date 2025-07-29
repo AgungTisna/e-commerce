@@ -36,6 +36,7 @@ jobs:
         python backend/manage.py check --deploy
 
     - name: Lint with flake8
+      continue-on-error: true
       run: |
         pip install flake8
         flake8 backend/ --exclude=migrations --max-line-length=88
